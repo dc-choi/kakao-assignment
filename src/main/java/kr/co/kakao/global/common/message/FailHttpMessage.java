@@ -41,7 +41,9 @@ public enum FailHttpMessage {
     CONFLICT(HttpStatus.CONFLICT, "이미 리소스가 존재합니다."),
 
     // 500 서버 에러
-    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 에러 입니다.");
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 에러 입니다."),
+    REDIS_LOCK_CONFLICT(HttpStatus.INTERNAL_SERVER_ERROR, "락 획득 실패."),
+    REDIS_LOCK_INTERRUPT(HttpStatus.INTERNAL_SERVER_ERROR, "락 획득 중 인터럽트 발생");
 
     private final HttpStatus status;
     private final String message;
