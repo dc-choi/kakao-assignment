@@ -5,6 +5,7 @@ import kr.co.kakao.api.ad.domain.dto.response.FindAllParticipationResponse;
 import kr.co.kakao.global.common.message.FailHttpMessage;
 import kr.co.kakao.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ public class MemberController {
     private final AdParticipationService adParticipationService;
 
     @GetMapping("/{memberId}/participation")
-    public ResponseEntity<List<FindAllParticipationResponse>> findAllParticipation(
+    public ResponseEntity<Page<FindAllParticipationResponse>> findAllParticipation(
             @PathVariable("memberId") Long memberId,
             @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "size", defaultValue = "50") int size,

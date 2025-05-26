@@ -23,7 +23,7 @@ public class AdController {
 
     @PostMapping
     public ResponseEntity<CreateAdResponse> create(@RequestBody CreateAdRequest createAdRequest) {
-        URI location = URI.create("/api/v1/ads");
+        URI location = URI.create("/v1/ads");
 
         return ResponseEntity.created(location).body(adService.createAd(createAdRequest));
     }

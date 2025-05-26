@@ -14,6 +14,8 @@ import kr.co.kakao.infra.persistence.ad.AdRepository;
 import kr.co.kakao.infra.persistence.member.MemberRepository;
 import kr.co.kakao.infra.point.ExternalPointService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,7 +56,7 @@ public class AdParticipationService {
         return new CreateParticipationResponse(ad.getId(), member.getId());
     }
 
-    public List<FindAllParticipationResponse> findAllParticipation(Long memberId, Pageable pageable, LocalDate startedAt, LocalDate endedAt) {
+    public Page<FindAllParticipationResponse> findAllParticipation(Long memberId, Pageable pageable, LocalDate startedAt, LocalDate endedAt) {
         if (startedAt.isAfter(endedAt)) {
             throw new BusinessException(FailHttpMessage.STARTED_AT_IS_AFTER_ENDED_AT);
         }
@@ -62,10 +64,15 @@ public class AdParticipationService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new BusinessException(FailHttpMessage.NOT_FOUND_MEMBER));
 
-        List<AdParticipation> allByDateRange = adParticipationRepository.findAllByDateRange(member, startedAt.atStartOfDay(), endedAt.atTime(23, 59, 59), pageable);
+        Page<AdParticipation> allByDateRange = adParticipationRepository.findAllByDateRange(member, startedAt.atStartOfDay(), endedAt.atTime(23, 59, 59), pageable);
+        long count = adParticipationRepository.count();
 
-        return allByDateRange.stream()
+        return new PageImpl<>(
+                allByDateRange.stream()
                 .map(FindAllParticipationResponse::toDto)
-                .toList();
+                .toList(),
+                pageable,
+                count
+        );
     }
 }

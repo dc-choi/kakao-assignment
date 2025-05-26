@@ -19,6 +19,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
@@ -26,11 +28,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -193,7 +194,7 @@ class AdParticipationServiceTest {
                 .createdAt(LocalDateTime.of(2023, 1, 20, 14, 30))
                 .build();
 
-        List<AdParticipation> mockList = Arrays.asList(adParticipation1, adParticipation2);
+        Page<AdParticipation> mockList = new PageImpl<>(Arrays.asList(adParticipation1, adParticipation2), pageable, 2);
 
         when(memberRepository.findById(memberId)).thenReturn(Optional.of(mockMember));
         when(adParticipationRepository.findAllByDateRange(
@@ -204,13 +205,13 @@ class AdParticipationServiceTest {
         )).thenReturn(mockList);
 
         // when
-        List<FindAllParticipationResponse> responses = adParticipationService.findAllParticipation(memberId, pageable, startedAt, endedAt);
+        Page<FindAllParticipationResponse> responses = adParticipationService.findAllParticipation(memberId, pageable, startedAt, endedAt);
 
         // then
         assertThat(responses).isNotNull();
         assertThat(responses).hasSize(2);
-        assertThat(responses.get(0).adId()).isEqualTo(101L);
-        assertThat(responses.get(1).adId()).isEqualTo(102L);
+        assertThat(responses.getContent().get(0).adId()).isEqualTo(101L);
+        assertThat(responses.getContent().get(1).adId()).isEqualTo(102L);
     }
 
     @DisplayName("회원 참여 내역 조회 성공 - 참여 내역이 없는 경우")
@@ -230,10 +231,10 @@ class AdParticipationServiceTest {
                 any(LocalDateTime.class),
                 any(LocalDateTime.class),
                 any(Pageable.class)
-        )).thenReturn(Collections.emptyList());
+        )).thenReturn(new PageImpl<>(Collections.emptyList(), pageable, 0));
 
         // when
-        List<FindAllParticipationResponse> responses = adParticipationService.findAllParticipation(memberId, pageable, startedAt, endedAt);
+        Page<FindAllParticipationResponse> responses = adParticipationService.findAllParticipation(memberId, pageable, startedAt, endedAt);
 
         // then
         assertThat(responses).isNotNull();
