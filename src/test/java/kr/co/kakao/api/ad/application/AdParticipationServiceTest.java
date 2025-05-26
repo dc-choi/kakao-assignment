@@ -57,7 +57,6 @@ class AdParticipationServiceTest {
 
     @BeforeEach
     void setUp() {
-        // 모든 테스트에서 공통으로 사용될 mock 객체 및 request 설정
         Long memberId = 1L;
         Long adId = 101L;
         int rewardAmount = 1000;
@@ -66,14 +65,14 @@ class AdParticipationServiceTest {
 
         mockMember = Member.builder()
                 .id(memberId)
-                .build(); // 실제 Member 필드에 맞춰서 빌드
+                .build();
 
         mockAd = Ad.builder()
                 .id(adId)
                 .name("Test Ad")
                 .rewardAmount(rewardAmount)
-                .participationCount(5) // 충분한 참여 횟수
-                .build(); // 실제 Ad 필드에 맞춰서 빌드
+                .participationCount(5)
+                .build();
     }
 
     @DisplayName("광고 참여 성공")
@@ -97,7 +96,6 @@ class AdParticipationServiceTest {
         assertThat(response.adId()).isEqualTo(mockAd.getId());
         assertThat(response.memberId()).isEqualTo(mockMember.getId());
 
-        // 메서드 호출 검증
         verify(memberRepository, times(1)).findById(createParticipationRequest.memberId());
         verify(adRepository, times(1)).findById(createParticipationRequest.adId());
         verify(externalPointService, times(1)).earnPoints(mockMember.getId(), mockAd.getRewardAmount());
@@ -116,7 +114,6 @@ class AdParticipationServiceTest {
 
         assertThat(exception.getMessage()).isEqualTo(FailHttpMessage.NOT_FOUND_MEMBER.getMessage());
 
-        // 다른 메서드들은 호출되지 않았는지 검증
         verify(adRepository, times(0)).findById(any());
         verify(externalPointService, times(0)).earnPoints(anyLong(), anyInt());
         verify(adParticipationRepository, times(0)).save(any());
@@ -137,7 +134,6 @@ class AdParticipationServiceTest {
 
         assertThat(exception.getMessage()).isEqualTo(FailHttpMessage.NOT_FOUND_AD.getMessage());
 
-        // 외부 서비스나 저장소는 호출되지 않았는지 검증
         verify(externalPointService, times(0)).earnPoints(anyLong(), anyInt());
         verify(adParticipationRepository, times(0)).save(any());
     }
@@ -146,8 +142,6 @@ class AdParticipationServiceTest {
     @Test
     void participation_Fail_NotEnoughParticipationCount() {
         // given
-        // participationCount가 0이 되도록 설정 (decrementParticipationCount 호출 시 예외 발생을 유도)
-        // Ad 클래스의 decrementParticipationCount()가 예외를 던지도록 모의해야 함
         mockAd = Ad.builder()
                 .id(createParticipationRequest.adId())
                 .name("Test Ad")
@@ -167,7 +161,6 @@ class AdParticipationServiceTest {
 
         assertThat(exception.getMessage()).isEqualTo(FailHttpMessage.NOT_ENOUGH_PARTICIPATION_COUNT.getMessage());
 
-        // 관련 메서드들이 적절히 호출되었는지 검증 (예외 발생 전까지)
         verify(memberRepository, times(1)).findById(createParticipationRequest.memberId());
         verify(adRepository, times(1)).findById(createParticipationRequest.adId());
         verify(externalPointService, times(1)).earnPoints(mockMember.getId(), mockAd.getRewardAmount());
