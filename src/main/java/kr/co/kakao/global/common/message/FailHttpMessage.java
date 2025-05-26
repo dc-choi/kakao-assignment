@@ -16,6 +16,9 @@ public enum FailHttpMessage {
     NOT_NULL(HttpStatus.BAD_REQUEST, "null 값은 입력할 수 없습니다."),
     NOT_BLANK(HttpStatus.BAD_REQUEST, "빈 값은 입력할 수 없습니다."),
     NOT_ENOUGH_PARTICIPATION_COUNT(HttpStatus.BAD_REQUEST, "해당 광고에 참여할 수 있는 횟수가 부족합니다."),
+    STARTED_AT_IS_AFTER_ENDED_AT(HttpStatus.BAD_REQUEST, "시작 날짜는 종료 날짜보다 이전이어야 합니다."),
+    INVALID_PAGE_OR_SIZE(HttpStatus.BAD_REQUEST, "잘못된 페이지 또는 사이즈 값입니다."),
+    STARTED_AT_OR_ENDED_AT_IS_NULL(HttpStatus.BAD_REQUEST, "시작 날짜 또는 종료 날짜가 null입니다."),
 
     // 401
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "인증되지 않은 접근입니다."),

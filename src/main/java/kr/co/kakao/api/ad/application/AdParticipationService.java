@@ -2,6 +2,7 @@ package kr.co.kakao.api.ad.application;
 
 import kr.co.kakao.api.ad.domain.dto.request.CreateParticipationRequest;
 import kr.co.kakao.api.ad.domain.dto.response.CreateParticipationResponse;
+import kr.co.kakao.api.ad.domain.dto.response.FindAllParticipationResponse;
 import kr.co.kakao.api.ad.domain.entity.Ad;
 import kr.co.kakao.api.ad.domain.entity.AdParticipation;
 import kr.co.kakao.api.member.domain.entity.Member;
@@ -13,8 +14,12 @@ import kr.co.kakao.infra.persistence.ad.AdRepository;
 import kr.co.kakao.infra.persistence.member.MemberRepository;
 import kr.co.kakao.infra.point.ExternalPointService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -47,5 +52,20 @@ public class AdParticipationService {
         adParticipationRepository.save(adParticipation);
 
         return new CreateParticipationResponse(ad.getId(), member.getId());
+    }
+
+    public List<FindAllParticipationResponse> findAllParticipation(Long memberId, Pageable pageable, LocalDate startedAt, LocalDate endedAt) {
+        if (startedAt.isAfter(endedAt)) {
+            throw new BusinessException(FailHttpMessage.STARTED_AT_IS_AFTER_ENDED_AT);
+        }
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new BusinessException(FailHttpMessage.NOT_FOUND_MEMBER));
+
+        List<AdParticipation> allByDateRange = adParticipationRepository.findAllByDateRange(member, startedAt.atStartOfDay(), endedAt.atTime(23, 59, 59), pageable);
+
+        return allByDateRange.stream()
+                .map(FindAllParticipationResponse::toDto)
+                .toList();
     }
 }

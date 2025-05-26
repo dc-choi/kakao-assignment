@@ -15,7 +15,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/ads")
+@RequestMapping("/v1/ads")
 @RequiredArgsConstructor
 public class AdController {
     private final AdService adService;
