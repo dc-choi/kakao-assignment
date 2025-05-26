@@ -3,4 +3,6 @@ package kr.co.kakao.infra.persistence.ad;
 import kr.co.kakao.api.ad.domain.entity.Ad;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface AdRepository extends JpaRepository<Ad, Long> {}
+public interface AdRepository extends JpaRepository<Ad, Long> {
+    Ad findByName(String name);
+}
