@@ -15,6 +15,7 @@ public enum FailHttpMessage {
     MISSING_PARAMETER(HttpStatus.BAD_REQUEST, "필수 파라미터가 누락되었습니다."),
     NOT_NULL(HttpStatus.BAD_REQUEST, "null 값은 입력할 수 없습니다."),
     NOT_BLANK(HttpStatus.BAD_REQUEST, "빈 값은 입력할 수 없습니다."),
+    NOT_ENOUGH_PARTICIPATION_COUNT(HttpStatus.BAD_REQUEST, "해당 광고에 참여할 수 있는 횟수가 부족합니다."),
 
     // 401
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "인증되지 않은 접근입니다."),
@@ -32,7 +33,7 @@ public enum FailHttpMessage {
     // 404
     NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 리소스입니다."),
     NOT_FOUND_MEMBER(HttpStatus.NOT_FOUND, "존재하지 않는 회원입니다."),
-    NOT_FOUND_SUBSCRIBE(HttpStatus.NOT_FOUND, "존재하지 않는 구독 정보입니다."),
+    NOT_FOUND_AD(HttpStatus.NOT_FOUND, "존재하지 않는 광고입니다."),
 
     // 405
     METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "허용되지 않은 HTTP METHOD 입니다."),

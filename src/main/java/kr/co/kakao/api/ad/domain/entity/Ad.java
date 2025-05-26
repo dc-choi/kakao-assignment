@@ -4,6 +4,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import kr.co.kakao.global.common.entity.BaseEntity;
+import kr.co.kakao.global.common.message.FailHttpMessage;
+import kr.co.kakao.global.exception.BusinessException;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -45,4 +47,11 @@ public class Ad extends BaseEntity {
 
     @Column(name = "participation_qualifications", columnDefinition = "VARCHAR(20)")
     private String participationQualifications;
+
+    public void decrementParticipationCount() {
+        if (this.participationCount <= 0) {
+            throw new BusinessException(FailHttpMessage.NOT_ENOUGH_PARTICIPATION_COUNT);
+        }
+        this.participationCount--;
+    }
 }

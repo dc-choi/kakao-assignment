@@ -6,7 +6,6 @@ import kr.co.kakao.api.ad.domain.dto.response.FindAllAdResponse;
 import kr.co.kakao.api.ad.domain.entity.Ad;
 import kr.co.kakao.global.common.message.FailHttpMessage;
 import kr.co.kakao.global.exception.BusinessException;
-import kr.co.kakao.global.lock.DistributedLock;
 import kr.co.kakao.infra.persistence.ad.AdRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,7 +19,6 @@ import java.util.List;
 public class AdService {
     private final AdRepository adRepository;
 
-    @DistributedLock(key = "#createAdRequest.name")
     @Transactional
     public CreateAdResponse createAd(CreateAdRequest createAdRequest) {
         Ad vaildAd = adRepository.findByName(createAdRequest.name());
