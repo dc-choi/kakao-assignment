@@ -3,12 +3,13 @@ package kr.co.kakao.api.ad.presentation;
 import kr.co.kakao.api.ad.application.AdService;
 import kr.co.kakao.api.ad.domain.dto.request.CreateAdRequest;
 import kr.co.kakao.api.ad.domain.dto.response.CreateAdResponse;
-import kr.co.kakao.api.ad.domain.entity.Ad;
+import kr.co.kakao.api.ad.domain.dto.response.FindAllAdResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/ads")
@@ -18,8 +19,13 @@ public class AdController {
 
     @PostMapping
     public ResponseEntity<CreateAdResponse> create(@RequestBody CreateAdRequest createAdRequest) {
-        URI location = URI.create("/api/v1/ads/"); // Assuming name is unique for simplicity
+        URI location = URI.create("/api/v1/ads");
 
-        return ResponseEntity.created(location).body(adService.createAd(createAdRequest)); // Placeholder response, replace with actual logic
+        return ResponseEntity.created(location).body(adService.createAd(createAdRequest));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<FindAllAdResponse>> findAll() {
+        return ResponseEntity.ok(adService.findAllAds());
     }
 }

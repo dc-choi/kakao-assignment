@@ -2,11 +2,13 @@ package kr.co.kakao.api.ad.application;
 
 import kr.co.kakao.api.ad.domain.dto.request.CreateAdRequest;
 import kr.co.kakao.api.ad.domain.dto.response.CreateAdResponse;
+import kr.co.kakao.api.ad.domain.dto.response.FindAllAdResponse;
 import kr.co.kakao.api.ad.domain.entity.Ad;
 import kr.co.kakao.api.member.domain.enumerated.ParticipationQualifications;
 import kr.co.kakao.global.common.message.FailHttpMessage;
 import kr.co.kakao.global.exception.BusinessException;
 import kr.co.kakao.infra.persistence.ad.AdRepository;
+import kr.co.kakao.util.MockUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,8 +22,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AdServiceTest {
@@ -62,7 +63,6 @@ class AdServiceTest {
 
         CreateAdResponse expectedResponse = CreateAdResponse.toDto(savedEntity);
 
-        // mock static: CreateAdRequest.toEntity() 와 CreateAdResponse.toDto()
         try (MockedStatic<CreateAdRequest> mockedRequest = mockStatic(CreateAdRequest.class);
              MockedStatic<CreateAdResponse> mockedResponse = mockStatic(CreateAdResponse.class)) {
 
@@ -103,5 +103,21 @@ class AdServiceTest {
         assertThatThrownBy(() -> adService.createAd(request))
                 .isInstanceOf(BusinessException.class)
                 .hasMessage(FailHttpMessage.CONFLICT.getMessage());
+    }
+
+    @Test
+    @DisplayName("광고 조회 성공 - 광고 목록 반환")
+    void findTop10ValidAds() {
+        // given
+        List<Ad> mockAds = MockUtil.FindAllAd();
+        LocalDate now = LocalDate.now();
+        when(adRepository.findTop10ValidAds(now)).thenReturn(mockAds);
+
+        // when
+        List<FindAllAdResponse> result = adService.findAllAds();
+
+        // then
+        assertThat(result).hasSize(10);
+        verify(adRepository).findTop10ValidAds(now);
     }
 }
